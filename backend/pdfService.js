@@ -67,7 +67,7 @@ class PDFService {
       line-height: 1.6;
       color: #333;
       background: #ffffff;
-      padding: 15mm 12mm;
+      padding: 20px 25px;
       margin: 0;
     }
     .header {
@@ -77,17 +77,19 @@ class PDFService {
       border-bottom: 3px solid #667eea;
     }
     .header h1 {
-      font-size: 28px;
+      font-size: 26px;
       color: #667eea;
       margin-bottom: 12px;
       font-weight: bold;
     }
     .meta {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
+      text-align: center;
       font-size: 14px;
       color: #666;
+    }
+    .meta span {
+      display: inline-block;
+      margin: 0 15px;
     }
     .section {
       margin-bottom: 20px;
@@ -102,14 +104,13 @@ class PDFService {
       font-weight: bold;
     }
     .destination {
-      margin-bottom: 25px;
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      margin-bottom: 20px;
+      background: #f8f9fa;
       padding: 15px;
-      border-radius: 10px;
-      page-break-inside: avoid;
+      border-radius: 8px;
     }
     .destination h3 {
-      font-size: 18px;
+      font-size: 17px;
       color: #333;
       margin-bottom: 10px;
       font-weight: bold;
@@ -118,16 +119,14 @@ class PDFService {
       color: #666;
       margin-bottom: 12px;
       font-size: 13px;
-      line-height: 1.8;
+      line-height: 1.7;
     }
     .day {
       margin-bottom: 15px;
       background: #ffffff;
-      padding: 15px;
-      border-radius: 8px;
-      border-left: 5px solid #667eea;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      page-break-inside: avoid;
+      padding: 12px 15px;
+      border-radius: 6px;
+      border-left: 4px solid #667eea;
     }
     .day-header {
       font-size: 15px;
@@ -151,12 +150,12 @@ class PDFService {
     }
     .activity-time {
       display: inline-block;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #667eea;
       color: white;
-      padding: 3px 10px;
-      border-radius: 4px;
+      padding: 2px 8px;
+      border-radius: 3px;
       font-size: 11px;
-      margin-right: 10px;
+      margin-right: 8px;
       font-weight: bold;
     }
     .activity-name {
@@ -179,23 +178,28 @@ class PDFService {
     }
     .accommodation {
       margin-top: 10px;
-      padding: 10px 12px;
-      background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
-      border-radius: 5px;
+      padding: 8px 12px;
+      background: #fff3cd;
+      border-radius: 4px;
       font-size: 13px;
       border-left: 3px solid #ffc107;
     }
     .hotels {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+      margin-top: 10px;
     }
     .hotel {
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      padding: 15px;
-      border-radius: 10px;
-      page-break-inside: avoid;
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
       border: 1px solid #dee2e6;
+      display: inline-block;
+      width: 48%;
+      vertical-align: top;
+      margin-right: 2%;
+    }
+    .hotel:nth-child(2n) {
+      margin-right: 0;
     }
     .hotel h4 {
       color: #333;
@@ -226,14 +230,6 @@ class PDFService {
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-        color-adjust: exact !important;
-      }
-      html, body {
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      body {
-        padding: 10mm !important;
       }
     }
   </style>
