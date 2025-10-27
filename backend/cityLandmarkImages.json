@@ -1,0 +1,66 @@
+{
+  "北京": {
+    "landmark": "天安门",
+    "images": [
+      "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=1200&q=80",
+      "https://images.pexels.com/photos/3075993/pexels-photo-3075993.jpeg?auto=compress&w=1200"
+    ]
+  },
+  "上海": {
+    "landmark": "东方明珠",
+    "images": [
+      "https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=1200&q=80",
+      "https://images.pexels.com/photos/3075997/pexels-photo-3075997.jpeg?auto=compress&w=1200"
+    ]
+  },
+  "杭州": {
+    "landmark": "西湖",
+    "images": [
+      "https://images.unsplash.com/photo-1559378233-2d47ac3a75e6?w=1200&q=80",
+      "https://images.pexels.com/photos/2901215/pexels-photo-2901215.jpeg?auto=compress&w=1200"
+    ]
+  },
+  "哈尔滨": {
+    "landmark": "索菲亚教堂",
+    "images": [
+      "https://images.unsplash.com/photo-1548919973-5cef591cdbc9?w=1200&q=80",
+      "https://images.pexels.com/photos/1486222/pexels-photo-1486222.jpeg?auto=compress&w=1200"
+    ]
+  },
+  "济南": {
+    "landmark": "大明湖",
+    "images": [
+      "https://images.unsplash.com/photo-1589735399161-c3320d3c5f85?w=1200&q=80"
+    ]
+  },
+  "青岛": {
+    "landmark": "栈桥",
+    "images": [
+      "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=1200&q=80"
+    ]
+  },
+  "天津": {
+    "landmark": "天津之眼",
+    "images": [
+      "https://images.unsplash.com/photo-1574073860948-0e82818c98e8?w=1200&q=80"
+    ]
+  },
+  "西安": {
+    "landmark": "钟楼",
+    "images": [
+      "https://images.unsplash.com/photo-1580414057041-d6ee11a1fab5?w=1200&q=80"
+    ]
+  },
+  "成都": {
+    "landmark": "大熊猫",
+    "images": [
+      "https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=1200&q=80"
+    ]
+  },
+  "重庆": {
+    "landmark": "洪崖洞",
+    "images": [
+      "https://images.unsplash.com/photo-1590735935903-32677f15f1e6?w=1200&q=80"
+    ]
+  }
+}
