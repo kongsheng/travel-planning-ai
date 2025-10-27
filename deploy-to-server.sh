@@ -70,10 +70,7 @@ if [ -d "$PROJECT_DIR" ]; then
     git pull
 else
     echo "📥 正在克隆项目..."
-    echo "⚠️  请先在 GitHub 创建仓库并推送代码！"
-    echo "然后修改下面的 GitHub 地址："
-    # 替换成你的 GitHub 仓库地址
-    git clone https://github.com/你的用户名/travel-planning-ai.git
+    git clone https://github.com/kongsheng/travel-planning-ai.git
     cd $PROJECT_DIR
 fi
 
