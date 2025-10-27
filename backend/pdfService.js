@@ -1,191 +1,304 @@
-// PDF 生成服务 - 使用 PDFKit 生成真正的PDF文件(无需浏览器)
-const PDFDocument = require('pdfkit');
+// PDF 生成服务 - 使用 html-pdf-node 将 HTML 转换为 PDF
+const htmlToPdf = require('html-pdf-node');
 
 class PDFService {
   // 生成PDF文件(Buffer格式)
   static async generatePDF(tripData) {
-    return new Promise((resolve, reject) => {
-      try {
-        console.log('开始生成 PDF...');
-        
-        // 创建PDF文档
-        const doc = new PDFDocument({
-          size: 'A4',
-          margins: {
-            top: 50,
-            bottom: 50,
-            left: 50,
-            right: 50
-          }
-        });
-
-        // 收集PDF数据到Buffer
-        const chunks = [];
-        doc.on('data', chunk => chunks.push(chunk));
-        doc.on('end', () => {
-          const pdfBuffer = Buffer.concat(chunks);
-          console.log('✅ PDF生成成功,大小:', pdfBuffer.length, 'bytes');
-          resolve(pdfBuffer);
-        });
-        doc.on('error', reject);
-
-        const { title, summary, destinations, hotels } = tripData;
-
-        // 注册中文字体(使用系统自带字体)
-        try {
-          // Linux 系统字体路径
-          doc.registerFont('Chinese', '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc');
-          doc.font('Chinese');
-        } catch (e) {
-          console.log('⚠️ 中文字体加载失败,使用默认字体');
-          doc.font('Helvetica');
+    try {
+      console.log('🚀 开始生成 PDF...');
+      
+      // 生成 HTML 内容
+      const html = this.generateHTML(tripData);
+      console.log('✅ HTML 内容生成完成, 长度:', html.length);
+      
+      // 配置 PDF 选项
+      const options = {
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '0mm',
+          right: '0mm',
+          bottom: '0mm',
+          left: '0mm'
         }
+      };
+      
+      const file = { content: html };
+      
+      // 生成 PDF Buffer
+      const pdfBuffer = await htmlToPdf.generatePdf(file, options);
+      console.log('✅ PDF 生成成功, 大小:', pdfBuffer.length, 'bytes');
+      
+      return pdfBuffer;
+      
+    } catch (error) {
+      console.error('❌ PDF 生成失败:', error);
+      throw error;
+    }
+  }
 
-        // 1. 标题部分
-        doc.fontSize(24)
-           .fillColor('#667eea')
-           .text(title, { align: 'center' });
-        
-        doc.moveDown(0.5);
-        
-        // 2. 摘要信息
-        doc.fontSize(12)
-           .fillColor('#666666')
-           .text(`${summary.days} 天  |  ${summary.destinations} 个目的地  |  ${summary.travelers} 人`, { 
-             align: 'center' 
-           });
-        
-        doc.moveDown();
-        doc.moveTo(50, doc.y)
-           .lineTo(545, doc.y)
-           .strokeColor('#667eea')
-           .lineWidth(2)
-           .stroke();
-        
-        doc.moveDown(1.5);
+  // 生成 HTML 格式的行程计划
+  static generateHTML(tripData) {
+    const { title, summary, destinations, hotels } = tripData;
 
-        // 3. 行程详情标题
-        doc.fontSize(16)
-           .fillColor('#667eea')
-           .text('行程详情');
-        
-        doc.moveDown(0.5);
-
-        // 遍历目的地
-        destinations.forEach((dest) => {
-          // 城市信息
-          doc.fontSize(14)
-             .fillColor('#333333')
-             .text(`${dest.city}, ${dest.country}`, { underline: true });
-          
-          doc.moveDown(0.3);
-          
-          doc.fontSize(11)
-             .fillColor('#666666')
-             .text(dest.description, { align: 'justify' });
-          
-          doc.moveDown(0.8);
-
-          // 每日行程
-          dest.days.forEach((day) => {
-            // 检查是否需要换页
-            if (doc.y > 700) {
-              doc.addPage();
-            }
-
-            // 日期和标题
-            doc.fontSize(12)
-               .fillColor('#667eea')
-               .text(day.date);
-            
-            doc.fontSize(11)
-               .fillColor('#333333')
-               .text(day.title);
-            
-            doc.moveDown(0.3);
-
-            // 活动列表
-            day.activities.forEach((activity) => {
-              const activityText = `${activity.time} - ${activity.name}`;
-              const activityDesc = `   ${activity.description} (${activity.duration})`;
-              
-              doc.fontSize(10)
-                 .fillColor('#333333')
-                 .text(activityText);
-              
-              doc.fontSize(9)
-                 .fillColor('#666666')
-                 .text(activityDesc, { indent: 15 });
-              
-              doc.moveDown(0.2);
-            });
-
-            // 住宿信息
-            doc.fontSize(10)
-               .fillColor('#FF9800')
-               .text(`住宿: ${day.accommodation}`);
-            
-            doc.moveDown(0.8);
-          });
-
-          doc.moveDown(0.5);
-        });
-
-        // 4. 酒店推荐
-        if (doc.y > 600) {
-          doc.addPage();
-        }
-
-        doc.fontSize(16)
-           .fillColor('#667eea')
-           .text('精选住宿');
-        
-        doc.moveDown(0.5);
-
-        hotels.forEach((hotel) => {
-          if (doc.y > 700) {
-            doc.addPage();
-          }
-
-          doc.fontSize(12)
-             .fillColor('#333333')
-             .text(hotel.name);
-          
-          doc.fontSize(10)
-             .fillColor('#667eea')
-             .text(hotel.city);
-          
-          doc.fontSize(9)
-             .fillColor('#666666')
-             .text(hotel.description, { align: 'justify' });
-          
-          doc.moveDown(0.8);
-        });
-
-        // 5. 页脚
-        const pageCount = doc.bufferedPageRange().count;
-        for (let i = 0; i < pageCount; i++) {
-          doc.switchToPage(i);
-          
-          doc.fontSize(8)
-             .fillColor('#999999')
-             .text(
-               `此旅行计划由 AI 智能生成 | 生成时间: ${new Date().toLocaleString('zh-CN')}`,
-               50,
-               doc.page.height - 40,
-               { align: 'center', width: doc.page.width - 100 }
-             );
-        }
-
-        // 完成PDF生成
-        doc.end();
-        
-      } catch (error) {
-        console.error('❌ PDF生成失败:', error);
-        reject(error);
+    const html = `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    html {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #ffffff;
+      padding: 15mm 12mm;
+      margin: 0;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #667eea;
+    }
+    .header h1 {
+      font-size: 28px;
+      color: #667eea;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+    .meta {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      font-size: 14px;
+      color: #666;
+    }
+    .section {
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+    .section-title {
+      font-size: 20px;
+      color: #667eea;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e0e0e0;
+      font-weight: bold;
+    }
+    .destination {
+      margin-bottom: 25px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 15px;
+      border-radius: 10px;
+      page-break-inside: avoid;
+    }
+    .destination h3 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .destination p {
+      color: #666;
+      margin-bottom: 12px;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .day {
+      margin-bottom: 15px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 5px solid #667eea;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      page-break-inside: avoid;
+    }
+    .day-header {
+      font-size: 15px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .day-date {
+      color: #667eea;
+      font-size: 14px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    .activity {
+      margin: 8px 0 8px 15px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .activity:last-child {
+      border-bottom: none;
+    }
+    .activity-time {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+    .activity-name {
+      font-weight: bold;
+      color: #333;
+      font-size: 13px;
+    }
+    .activity-desc {
+      color: #666;
+      font-size: 12px;
+      margin-top: 5px;
+      margin-left: 18px;
+      line-height: 1.6;
+    }
+    .activity-duration {
+      color: #999;
+      font-size: 11px;
+      margin-left: 18px;
+      margin-top: 3px;
+    }
+    .accommodation {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+      border-radius: 5px;
+      font-size: 13px;
+      border-left: 3px solid #ffc107;
+    }
+    .hotels {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .hotel {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 15px;
+      border-radius: 10px;
+      page-break-inside: avoid;
+      border: 1px solid #dee2e6;
+    }
+    .hotel h4 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .hotel-city {
+      color: #667eea;
+      font-size: 13px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .hotel-desc {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px solid #e0e0e0;
+      text-align: center;
+      color: #999;
+      font-size: 11px;
+    }
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
       }
-    });
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      body {
+        padding: 10mm !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>${title}</h1>
+    <div class="meta">
+      <span>📅 ${summary.days} 天</span>
+      <span>📍 ${summary.destinations} 个目的地</span>
+      <span>👥 ${summary.travelers} 人</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">📍 行程详情</h2>
+    ${destinations.map((dest) => `
+      <div class="destination">
+        <h3>${dest.city}, ${dest.country}</h3>
+        <p>${dest.description}</p>
+        
+        ${dest.days.map((day) => `
+          <div class="day">
+            <div class="day-date">${day.date}</div>
+            <div class="day-header">${day.title}</div>
+            ${day.activities.map(activity => `
+              <div class="activity">
+                <div>
+                  <span class="activity-time">${activity.time}</span>
+                  <span class="activity-name">${activity.name}</span>
+                </div>
+                <div class="activity-desc">${activity.description}</div>
+                <div class="activity-duration">⏱️ ${activity.duration}</div>
+              </div>
+            `).join('')}
+            <div class="accommodation">🏨 住宿：${day.accommodation}</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">🏨 精选住宿</h2>
+    <div class="hotels">
+      ${hotels.map(hotel => `
+        <div class="hotel">
+          <h4>${hotel.name}</h4>
+          <div class="hotel-city">📍 ${hotel.city}</div>
+          <div class="hotel-desc">${hotel.description}</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>此旅行计划由 AI 智能生成 | 生成时间：${new Date().toLocaleString('zh-CN')}</p>
+  </div>
+</body>
+</html>
+    `;
+
+    return html;
   }
 }
 
 module.exports = PDFService;
+
