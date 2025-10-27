@@ -64,50 +64,49 @@ class PDFService {
     }
     body {
       font-family: 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', Arial, sans-serif;
-      line-height: 1.6;
+      line-height: 1.5;
       color: #333;
       background: #ffffff;
-      padding: 20px 25px;
+      padding: 15px 20px;
       margin: 0;
     }
     .header {
       text-align: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
+      margin-bottom: 15px;
+      padding-bottom: 12px;
       border-bottom: 3px solid #667eea;
     }
     .header h1 {
-      font-size: 26px;
+      font-size: 24px;
       color: #667eea;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       font-weight: bold;
     }
     .meta {
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
       color: #666;
     }
     .meta span {
       display: inline-block;
-      margin: 0 15px;
+      margin: 0 12px;
     }
     .section {
       margin-bottom: 20px;
-      page-break-inside: avoid;
     }
     .section-title {
-      font-size: 20px;
+      font-size: 18px;
       color: #667eea;
-      margin-bottom: 15px;
-      padding-bottom: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
       border-bottom: 2px solid #e0e0e0;
       font-weight: bold;
     }
     .destination {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       background: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
+      padding: 12px;
+      border-radius: 5px;
     }
     .destination h3 {
       font-size: 17px;
